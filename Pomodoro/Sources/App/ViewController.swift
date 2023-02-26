@@ -14,24 +14,41 @@ class ViewController: UIViewController, CAAnimationDelegate {
     private var isStarted = false
     private var isAnimationStarted = false
     private var timer = Timer()
-    private var time = 5
+    private var time = 25
 
     private let foregroundProgressLayer = CAShapeLayer()
     private let backgroundProgressLayer = CAShapeLayer()
     let animation = CABasicAnimation(keyPath: "strokeEnd")
 
+    let largeButtonConfig = UIImage.SymbolConfiguration(pointSize: 40, weight: .bold, scale: .large)
+
     // MARK: - Outlets
+
+    private lazy var modeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Work"
+        label.textAlignment = .center
+        label.textColor = .label
+        label.font = UIFont.systemFont(ofSize: 40, weight: .bold)
+        return label
+    }()
 
     private lazy var timerLabel: UILabel = {
         let label = UILabel()
-        label.text = "00:05"
+        label.text = "00:25"
+        label.textAlignment = .center
+        label.textColor = .label
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         return label
     }()
 
     private lazy var startPauseButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Start", for: .normal)
+        let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(startPausePressed), for: .touchUpInside)
+        button.setImage(
+            UIImage(systemName: "play", withConfiguration: largeButtonConfig)?
+                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
 
@@ -39,7 +56,7 @@ class ViewController: UIViewController, CAAnimationDelegate {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.distribution = .equalCentering
+        stackView.distribution = .equalSpacing
 
         return stackView
     }()
@@ -48,7 +65,7 @@ class ViewController: UIViewController, CAAnimationDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .gray
+        view.backgroundColor = .systemBackground
         drawBackgroundLayer()
         setupStackView()
         setupHierarchy()
@@ -58,6 +75,7 @@ class ViewController: UIViewController, CAAnimationDelegate {
     // MARK: - Setup
 
     private func setupStackView() {
+        stackView.addArrangedSubview(modeLabel)
         stackView.addArrangedSubview(timerLabel)
         stackView.addArrangedSubview(startPauseButton)
     }
@@ -68,7 +86,9 @@ class ViewController: UIViewController, CAAnimationDelegate {
 
     private func setupLayout() {
         stackView.snp.makeConstraints { make in
-            make.center.equalTo(view)
+            make.centerX.equalTo(view)
+            make.top.equalToSuperview().offset(100)
+            make.bottom.equalToSuperview().offset(-100)
         }
     }
 
@@ -78,29 +98,30 @@ class ViewController: UIViewController, CAAnimationDelegate {
     private func drawBackgroundLayer() {
         backgroundProgressLayer.path = UIBezierPath(
             arcCenter: CGPoint(x: view.frame.midX, y: view.frame.midY),
-            radius: 100,
+            radius: 150,
             startAngle: -90.degreesToRadians,
             endAngle: 270.degreesToRadians,
             clockwise: true
         ).cgPath
-        backgroundProgressLayer.strokeColor = UIColor.white.cgColor
+        backgroundProgressLayer.strokeColor = UIColor.lightGray.cgColor
         backgroundProgressLayer.fillColor = UIColor.clear.cgColor
-        backgroundProgressLayer.lineWidth = 4
+        backgroundProgressLayer.lineWidth = 10
         view.layer.addSublayer(backgroundProgressLayer)
     }
 
     /// Foreground circle progress bar
     private func drawForegroundLayer() {
+        let animationColor = isWorkTime ? UIColor.red : UIColor.green
         foregroundProgressLayer.path = UIBezierPath(
             arcCenter: CGPoint(x: view.frame.midX, y: view.frame.midY),
-            radius: 100,
+            radius: 150,
             startAngle: -90.degreesToRadians,
             endAngle: 270.degreesToRadians,
             clockwise: true
         ).cgPath
-        foregroundProgressLayer.strokeColor = UIColor.red.cgColor
+        foregroundProgressLayer.strokeColor = animationColor.cgColor
         foregroundProgressLayer.fillColor = UIColor.clear.cgColor
-        foregroundProgressLayer.lineWidth = 4
+        foregroundProgressLayer.lineWidth = 8
         view.layer.addSublayer(foregroundProgressLayer)
     }
 
@@ -156,18 +177,30 @@ class ViewController: UIViewController, CAAnimationDelegate {
     }
 
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            if self.time <= 1 {
-                timer.invalidate()
-                self.startPauseButton.setTitle("Start", for: .normal)
-                self.stopAnimation()
-                self.time = 5
-                self.isStarted = false
-                self.timerLabel.text = "00:05"
-            } else {
-                self.time -= 1
-                self.timerLabel.text = self.formatTime()
-            }
+        timer = Timer.scheduledTimer(
+            timeInterval: 1,
+            target: self,
+            selector: #selector(updateTimer),
+            userInfo: nil,
+            repeats: true
+        )
+    }
+
+    @objc private func updateTimer() {
+        if time <= 1 {
+            modeLabel.text = isWorkTime ? "Rest" : "Work"
+            timer.invalidate()
+            startPauseButton.setImage(UIImage(systemName: "play", withConfiguration: largeButtonConfig)?
+                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .normal)
+
+            stopAnimation()
+            isWorkTime = !isWorkTime
+            time = isWorkTime ? 25 : 5
+            isStarted = false
+            timerLabel.text = formatTime()
+        } else {
+            time -= 1
+            timerLabel.text = formatTime()
         }
     }
 
@@ -182,12 +215,14 @@ class ViewController: UIViewController, CAAnimationDelegate {
             drawForegroundLayer()
             startResumeAnimation()
             startTimer()
-            startPauseButton.setTitle("Pause", for: .normal)
+            startPauseButton.setImage(UIImage(systemName: "pause", withConfiguration: largeButtonConfig)?
+                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .normal)
             isStarted = true
         } else {
             pauseAnimation()
             timer.invalidate()
-            startPauseButton.setTitle("Start", for: .normal)
+            startPauseButton.setImage(UIImage(systemName: "play", withConfiguration: largeButtonConfig)?
+                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .normal)
             isStarted = false
         }
     }
@@ -207,7 +242,7 @@ extension UIView {
 
 extension Int {
     var degreesToRadians: CGFloat {
-        return CGFloat(self) * .pi / 100
+        return CGFloat(self) * .pi / 180
     }
 }
 
