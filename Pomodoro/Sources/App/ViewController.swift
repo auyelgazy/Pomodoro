@@ -18,9 +18,9 @@ class ViewController: UIViewController, CAAnimationDelegate {
 
     private let foregroundProgressLayer = CAShapeLayer()
     private let backgroundProgressLayer = CAShapeLayer()
-    let animation = CABasicAnimation(keyPath: "strokeEnd")
+    private let animation = CABasicAnimation(keyPath: "strokeEnd")
 
-    let largeButtonConfig = UIImage.SymbolConfiguration(pointSize: 40, weight: .bold, scale: .large)
+    private let largeButtonConfig = UIImage.SymbolConfiguration(pointSize: 40, weight: .bold, scale: .large)
 
     // MARK: - Outlets
 
