@@ -14,13 +14,12 @@ class ViewController: UIViewController, CAAnimationDelegate {
     private var isStarted = false
     private var isAnimationStarted = false
     private var timer = Timer()
+    private let workTime = 25
+    private let restTime = 5
     private var time = 25
 
     private let foregroundProgressLayer = CAShapeLayer()
     private let backgroundProgressLayer = CAShapeLayer()
-    private let animation = CABasicAnimation(keyPath: "strokeEnd")
-
-    private let largeButtonConfig = UIImage.SymbolConfiguration(pointSize: 40, weight: .bold, scale: .large)
 
     // MARK: - Outlets
 
@@ -45,9 +44,7 @@ class ViewController: UIViewController, CAAnimationDelegate {
     private lazy var startPauseButton: UIButton = {
         let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(startPausePressed), for: .touchUpInside)
-        button.setImage(
-            UIImage(systemName: "play", withConfiguration: largeButtonConfig)?
-                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(getImage("play"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
@@ -57,7 +54,6 @@ class ViewController: UIViewController, CAAnimationDelegate {
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
-
         return stackView
     }()
 
@@ -130,26 +126,17 @@ class ViewController: UIViewController, CAAnimationDelegate {
     }
 
     private func startAnimation() {
-        resetAnimation()
+        let animation = CABasicAnimation(keyPath: "strokeEnd")
         foregroundProgressLayer.strokeEnd = 0.0
         animation.keyPath = "strokeEnd"
         animation.fromValue = 0
         animation.toValue = 1
         animation.duration = Double(time)
-        animation.delegate = self
         animation.isRemovedOnCompletion = false
         animation.isAdditive = true
-        animation.fillMode = CAMediaTimingFillMode.forwards
+        animation.fillMode = .forwards
         foregroundProgressLayer.add(animation, forKey: "strokeEnd")
         isAnimationStarted = true
-    }
-
-    private func resetAnimation() {
-        foregroundProgressLayer.speed = 1.0
-        foregroundProgressLayer.timeOffset = 0.0
-        foregroundProgressLayer.beginTime = 0.0
-        foregroundProgressLayer.strokeEnd = 0.0
-        isAnimationStarted = false
     }
 
     private func pauseAnimation() {
@@ -168,11 +155,7 @@ class ViewController: UIViewController, CAAnimationDelegate {
     }
 
     private func stopAnimation() {
-        foregroundProgressLayer.speed = 1.0
-        foregroundProgressLayer.timeOffset = 0.0
-        foregroundProgressLayer.beginTime = 0.0
-        foregroundProgressLayer.strokeEnd = 0.0
-        foregroundProgressLayer.removeAllAnimations()
+        foregroundProgressLayer.removeAnimation(forKey: "strokeEnd")
         isAnimationStarted = false
     }
 
@@ -186,16 +169,22 @@ class ViewController: UIViewController, CAAnimationDelegate {
         )
     }
 
+    private func getImage(_ name: String) -> UIImage? {
+        let image = UIImage(
+            systemName: name,
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .bold, scale: .large))?
+            .withTintColor(.red, renderingMode: .alwaysOriginal)
+        return image
+    }
+
     @objc private func updateTimer() {
         if time <= 1 {
             modeLabel.text = isWorkTime ? "Rest" : "Work"
             timer.invalidate()
-            startPauseButton.setImage(UIImage(systemName: "play", withConfiguration: largeButtonConfig)?
-                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .normal)
-
+            startPauseButton.setImage(getImage("play"), for: .normal)
             stopAnimation()
             isWorkTime = !isWorkTime
-            time = isWorkTime ? 25 : 5
+            time = isWorkTime ? workTime : restTime
             isStarted = false
             timerLabel.text = formatTime()
         } else {
@@ -215,14 +204,12 @@ class ViewController: UIViewController, CAAnimationDelegate {
             drawForegroundLayer()
             startResumeAnimation()
             startTimer()
-            startPauseButton.setImage(UIImage(systemName: "pause", withConfiguration: largeButtonConfig)?
-                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .normal)
+            startPauseButton.setImage(getImage("pause"), for: .normal)
             isStarted = true
         } else {
             pauseAnimation()
             timer.invalidate()
-            startPauseButton.setImage(UIImage(systemName: "play", withConfiguration: largeButtonConfig)?
-                .withTintColor(.red, renderingMode: .alwaysOriginal), for: .normal)
+            startPauseButton.setImage(getImage("play"), for: .normal)
             isStarted = false
         }
     }
