@@ -12,6 +12,7 @@
 		8C46EC8029A9ED1A00FF9F8B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C46EC7F29A9ED1A00FF9F8B /* ViewController.swift */; };
 		8C46EC8529A9ED1B00FF9F8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C46EC8429A9ED1B00FF9F8B /* Assets.xcassets */; };
 		8C46EC8829A9ED1B00FF9F8B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C46EC8629A9ED1B00FF9F8B /* LaunchScreen.storyboard */; };
+		8C46EC9629A9F5BF00FF9F8B /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8C46EC9529A9F5BF00FF9F8B /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C46EC9629A9F5BF00FF9F8B /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,6 +122,9 @@
 			dependencies = (
 			);
 			name = Pomodoro;
+			packageProductDependencies = (
+				8C46EC9529A9F5BF00FF9F8B /* SnapKit */,
+			);
 			productName = Pomodoro;
 			productReference = 8C46EC7829A9ED1A00FF9F8B /* Pomodoro.app */;
 			productType = "com.apple.product-type.application";
@@ -148,6 +153,9 @@
 				Base,
 			);
 			mainGroup = 8C46EC6F29A9ED1A00FF9F8B;
+			packageReferences = (
+				8C46EC9429A9F5BF00FF9F8B /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 8C46EC7929A9ED1A00FF9F8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -320,8 +328,7 @@
 				INFOPLIST_FILE = Pomodoro/Resources/Configuration/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -347,8 +354,7 @@
 				INFOPLIST_FILE = Pomodoro/Resources/Configuration/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -384,6 +390,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8C46EC9429A9F5BF00FF9F8B /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8C46EC9529A9F5BF00FF9F8B /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C46EC9429A9F5BF00FF9F8B /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8C46EC7029A9ED1A00FF9F8B /* Project object */;
 }
